@@ -50,5 +50,5 @@ Ultimate294 是一个为《SCP: 秘密实验室》(SCP: Secret Laboratory) 添�
 ## 权限
 `SCP294.admin`
 
-###中文汉化说明
+## 中文汉化说明
 汉化内容由DeepSeek-R1汉化并人工核对修改
