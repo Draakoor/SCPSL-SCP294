@@ -11,21 +11,21 @@ namespace SCP294.Config
     public class Config : IConfig
     {
 
-        // Required Config
+        // 必需配置
         /// <summary>
-        ///  Will the plugin run?
+        /// 是否启用插件？
         /// </summary>
-        [Description("Will the plugin run?")]
+        [Description("是否启用插件？")]
         public bool IsEnabled { get; set; } = true;
         /// <summary>
-        ///  Will the plugin print Debug Text?
+        /// 是否打印调试文本？
         /// </summary>
-        [Description("Will the plugin print Debug Text?")]
+        [Description("是否打印调试文本？")]
         public bool Debug { get; set; } = false;
         /// <summary>
-        /// Configure the Spawning Locations of SCP-294
+        /// 配置SCP-294的生成位置
         /// </summary>
-        [Description("Configure the Spawning Locations of SCP-294")]
+        [Description("配置SCP-294的生成位置")]
         public SpawningConfig SpawningLocations { get; set; } = new SpawningConfig() { 
             SpawnAmount = 1,
             SpawnRooms = new Dictionary<RoomType, List<SpawnTransform>>() {
@@ -63,54 +63,54 @@ namespace SCP294.Config
             }
         };
         /// <summary>
-        ///  Enable Voice Effects? Disable this if performance is subpar and you give out more than about 8 drinks per round.
+        /// 是否启用语音效果？若性能不佳且每回合分发超过8杯饮料，请禁用此选项
         /// </summary>
-        [Description("Enable Voice Effects? Disable this if performance is subpar and you give out more than about 8 drinks per round.")]
+        [Description("是否启用语音效果？若性能不佳且每回合分发超过8杯饮料，请禁用此选项")]
         public bool EnableVoiceEffects { get; set; } = true;
         /// <summary>
-        ///  Should players be forced to get a random drink? (Player drinks will still be requestable)
+        /// 是否强制玩家获取随机饮料？（玩家血液饮料仍可请求）
         /// </summary>
-        [Description("Should players be forced to get a random drink? (Player drinks will still be requestable)")]
+        [Description("是否强制玩家获取随机饮料？（玩家血液饮料仍可请求）")]
         public bool ForceRandom { get; set; } = false;
         /// <summary>
-        ///  How close to the machine does the player have to be?
+        /// 玩家需距离机器多近才可以使用？
         /// </summary>
-        [Description("How close to the machine does the player have to be?")]
+        [Description("玩家需距离机器多近才可以使用？")]
         public float UseDistance { get; set; } = 2.5f;
         /// <summary>
-        /// Should the Cola be dispensed into the machine's output? Set to False to put it in the player's inventory.
+        /// 可乐是否应放入机器输出口？设为False则直接放入玩家物品栏
         /// </summary>
-        [Description("Should the Cola be dispensed into the machine's output? Set to False to put it in the player's inventory.")]
+        [Description("可乐是否应放入机器输出口？设为False则直接放入玩家物品栏")]
         public bool SpawnInOutput { get; set; } = true;
         /// <summary>
-        /// How long should it take from command execution to dispense the drink?
+        /// 从执行命令到分发饮料的延迟时间（秒）
         /// </summary>
-        [Description("How long should it take from command execution to dispense the drink?")]
+        [Description("从执行命令到分发饮料的延迟时间（秒）")]
         public float DispenseDelay { get; set; } = 5.5f;
         /// <summary>
-        /// Cooldown after a player uses the machine. Starts exactly as the coin is inserted
+        /// 玩家使用机器后的冷却时间（从投入硬币时开始计算）
         /// </summary>
-        [Description("Cooldown after a player uses the machine. Starts exactly as the coin is inserted")]
+        [Description("玩家使用机器后的冷却时间（从投入硬币时开始计算）")]
         public float CooldownTime { get; set; } = 10f;
         /// <summary>
-        /// Enable to use the Community Made Drinks
+        /// 是否启用社区制作的饮料
         /// </summary>
-        [Description("Enable to use the Community Made Drinks")]
+        [Description("是否启用社区制作的饮料")]
         public bool EnableCommunityDrinks { get; set; } = true;
         /// <summary>
-        /// The maximum uses of a SCP-294 machine before it deactivates. Set to -1 for infinite uses
+        /// SCP-294机器停用前的最大使用次数（设为-1表示无限使用）
         /// </summary>
-        [Description("The maximum uses of a SCP-294 machine before it deactivates. Set to -1 for infinite uses")]
+        [Description("SCP-294机器停用前的最大使用次数（设为-1表示无限使用）")]
         public int MaxUsesPerMachine { get; set; } = 3;
         /// <summary>
-        /// The maximum size a player can grow to from a drink.
+        /// 饮用饮料后玩家可达到的最大体型
         /// </summary>
-        [Description("The maximum size a player can grow to from a drink.")]
+        [Description("饮用饮料后玩家可达到的最大体型")]
         public Vector3 MaxSizeFromDrink { get; set; } = new Vector3(1.3f,1.3f,1.3f);
         /// <summary>
-        /// The minimum size a player can shrink to from a drink.
+        /// 饮用饮料后玩家可缩小的最小体型
         /// </summary>
-        [Description("The minimum size a player can shrink to from a drink.")]
+        [Description("饮用饮料后玩家可缩小的最小体型")]
         public Vector3 MinSizeFromDrink { get; set; } = new Vector3(0.7f,0.7f,0.7f);
     }
 }
