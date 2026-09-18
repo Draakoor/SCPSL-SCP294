@@ -1,8 +1,8 @@
-# SCP-294 — 2.0.0
+# SCP-294 — 2.1.0
 
 A coin-operated anomalous drinks machine with configurable Entrance Zone spawn points, drink effects, dispensing sounds and admin commands. The included server preset allows eight uses per machine and disables community joke drinks.
 
-Updated for **SCP:SL 14.2.7 / EXILED 9.14.2 / LabAPI 1.1.7 / ProjectMER 2026.7.6.1**. [Download the release](https://github.com/Draakoor/SCPSL-SCP294/releases/tag/v2.0.0).
+Updated for **SCP:SL 14.2.7 / EXILED 9.14.2 / LabAPI 1.1.7 / ProjectMER 2026.7.6.1**. [Download the release](https://github.com/Draakoor/SCPSL-SCP294/releases/tag/v2.1.0).
 
 ## Installation
 
@@ -17,6 +17,10 @@ For manual installation, copy `Ultimate294.dll` into `EXILED/Plugins/`, and `Sch
 The release ZIP includes the plugin, model, configuration and sounds. Framework/API dependency binaries must already be installed and are not bundled. On Linux these configuration roots are normally under `/home/container/.config/`; on Windows they are under the server account’s application-data directory.
 
 ## Usage
+
+Open **Settings → Server Specific → SCP-294**. Set **Use SCP-294** to your preferred key (default **K**) and enter a **Drink order**, for example `coffee`, `water` or `random`. Hold a coin while standing near the machine, then press the key. An empty order uses a random drink. The key uses exactly the same coin, distance, role, stock and cooldown checks as `.scp294 <drink>`.
+
+The key is disabled in menus and for spectators. The plugin appends its settings without replacing other plugins' menus and removes only its own definitions/callbacks on disable. The approach hint displays each player's actual key binding. Oversized legacy prompts were replaced with normal-sized hints.
 
 Hold a coin, stand near the machine and enter `.scp294 <drink>` in the client console. Administrators with `SCP294.admin` can use RA `scp294 create`, `remove`, `setuses` and `givedrink`. The assembly remains `Ultimate294.dll`; do not also load the old SCP294/Ultimate294 DLL. The schematic folder is lowercase `scp294`.
 

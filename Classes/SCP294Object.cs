@@ -41,11 +41,12 @@ namespace SCP294.Classes
                         if (!SCP294.Instance.PlayersNear294.Contains(player.UserId)) {
                             SchematicObject scp294 = GetClosest294(player);
                             if (SCP294.Instance.SCP294UsesLeft.Keys.Contains(scp294) && SCP294.Instance.SCP294UsesLeft[scp294] == 0) {
-                                player.ShowHint("<size=300>\n</size>\n<size=35>You Approach SCP-294.</size>\n<size=30>It seems to have lost all power, rendering it unusable for now...</size>", 3);
+                                player.ShowHint("<size=28>SCP-294</size>\n<size=22>The machine is out of service.</size>", 3);
                             }
                             else
                             {
-                                player.ShowHint("<size=300>\n</size>\n<size=35>You Approach SCP-294.</size>\n<size=30>If you had a coin, you could buy a drink...</size>\n<size=20>(Hold a Coin, Open Console, Use the command '.scp294 <drink>' to dispense your drink of choice)</size>", 3);
+                                player.HintDisplay.Show(new Hints.TextHint("<size=28>SCP-294</size>\n<size=22>Hold a coin and press {0} to order a drink.</size>\n<size=18>Set your key and drink in Settings / Server Specific / SCP-294.</size>",
+                                    new Hints.HintParameter[] { new Hints.SSKeybindHintParameter(SCP294.UseSettingId) }, durationScalar: 3));
                             }
                             SCP294.Instance.PlayersNear294.Add(player.UserId);
                         }

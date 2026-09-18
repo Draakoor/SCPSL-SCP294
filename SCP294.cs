@@ -14,12 +14,12 @@ using VoiceChat.Codec;
 
 namespace SCP294
 {
-    public class SCP294 : Plugin<Config.Config>
+    public partial class SCP294 : Plugin<Config.Config>
     {
         public override string Name => "Ultimate294";
         public override string Prefix => "ultimate294";
         public override string Author => "creepycats";
-        public override Version Version => new Version(2, 0, 0);
+        public override Version Version => new Version(2, 1, 0);
 
         public override Version RequiredExiledVersion => new Version(9, 14, 2);
 
@@ -48,6 +48,7 @@ namespace SCP294
             if (Config.Debug)
                 Log.Info("Registering events...");
             RegisterEvents();
+            RegisterMachineSettings();
 
             DrinkManager.LoadBaseDrinks();
 
@@ -64,6 +65,7 @@ namespace SCP294
             if (Config.Debug)
                 Log.Info("Unregistering events...");
             UnregisterEvents();
+            UnregisterMachineSettings();
 
             ServerHandler.Cleanup();
             DrinkManager.UnloadAllDrinks();

@@ -1,8 +1,8 @@
-# Build SCP-294 2.0.0
+# Build SCP-294 2.1.0
 
 Target: SCP:SL **14.2.7**, EXILED **9.14.2**, LabAPI **1.1.7** and ProjectMER **2026.7.6.1**. The plugin targets .NET Framework 4.8 and builds with a current .NET SDK.
 
-Supply DLLs from the matching server in a separate folder: the game's Managed assemblies, EXILED API/Events/Loader, ProjectMER, LabApi and their existing dependencies. SCP-294 additionally requires the tested AudioPlayerApi 1.1.2 and Harmony references. Proprietary game-reference binaries are not included.
+Supply DLLs from the matching server in a separate folder: the game's Managed assemblies, EXILED API/Events/Loader, ProjectMER, LabApi and their existing dependencies. Both plugins additionally require the tested AudioPlayerApi 1.1.2 and Harmony references. Proprietary game-reference binaries are not included.
 
 ```powershell
 dotnet build SCP294.csproj -c Release -p:SLReferences=C:/path/to/server-references
