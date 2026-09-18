@@ -1,9 +1,8 @@
-﻿using Exiled.API.Enums;
+using Exiled.API.Enums;
 using Exiled.API.Features;
-using MapEditorReborn.API.Features;
-using MapEditorReborn.API.Features.Objects;
-using MapEditorReborn.API.Features.Serializable;
-using MapEditorReborn.Commands.ModifyingCommands.Scale;
+using ProjectMER.Features;
+using ProjectMER.Features.Objects;
+using ProjectMER.Features.Serializable;
 using SCP294.Types;
 using SCP294.Utils;
 using System;
@@ -18,8 +17,6 @@ using Exiled.API.Features.Toys;
 using InventorySystem.Items.Pickups;
 using InventorySystem.Items;
 using Exiled.API.Features.Items;
-using MapEditorReborn.Commands.ModifyingCommands.Position;
-using MapEditorReborn.Commands.ModifyingCommands.Rotation;
 
 namespace SCP294.Classes
 {
@@ -33,7 +30,7 @@ namespace SCP294.Classes
         {
             for (; ; )
             {
-                yield return Timing.WaitForSeconds(0.1f);
+                yield return Timing.WaitForSeconds(0.35f);
 
                 foreach (Player player in Player.List)
                 {
@@ -87,7 +84,7 @@ namespace SCP294.Classes
         /// </summary>
         public static void CreateSCP294(Vector3 Position, Quaternion Rotation, Vector3 Scale)
         {
-            SchematicObject scp294 = ObjectSpawner.SpawnSchematic("scp294", Vector3.zero, Quaternion.identity, Vector3.one, null!);
+            if (!ObjectSpawner.TrySpawnSchematic("scp294", Position, Rotation, Scale, out SchematicObject scp294)) { Log.Error("SCP-294 schematic was not found or could not spawn."); return; }
             scp294.Position = Position;
             scp294.Rotation = Rotation;
             scp294.Scale = Scale;
@@ -95,17 +92,15 @@ namespace SCP294.Classes
             // Add Illumination to Front
             Vector3 lightPos = scp294.Position;
             lightPos += scp294.Rotation * new Vector3(0f, 1.25f, -1.25f);
-            SCP294.Instance.SCP294LightSources.Add(scp294,ObjectSpawner.SpawnLightSource(new LightSourceSerializable()
-            {
-                Color = "#FFF",
-                Intensity = 0.25f,
-                Shadows = true,
-                Range = 1
-            }, lightPos));
+            var lamp = Exiled.API.Features.Toys.Light.Create(lightPos);
+            lamp.Color = Color.white; lamp.Intensity = 0.25f; lamp.Range = 1f;
+            SCP294.Instance.SCP294LightSources.Add(scp294, lamp);
 
             // Add to 294 List
             SCP294.Instance.SpawnedSCP294s.Add(scp294, false);
             SCP294.Instance.SCP294UsesLeft.Add(scp294, SCP294.Instance.Config.MaxUsesPerMachine);
+            var room = Room.Get(Position);
+            Log.Info($"SCP-294 spawned: room={room?.Type}, zone={room?.Zone}, position={Position}. Use tbsite anomalies to list all spawned anomalies.");
         }
 
         /// <summary>
@@ -125,7 +120,7 @@ namespace SCP294.Classes
                         SCP294.Instance.SCP294LightSources[scp294].Destroy();
                         SCP294.Instance.SCP294LightSources.Remove(scp294);
                     }
-                } catch (Exception err) { }
+                } catch (Exception err) { Log.Warn("SCP-294 light cleanup: " + err.Message); }
                 scp294.Destroy();
             }
         }
@@ -141,8 +136,8 @@ namespace SCP294.Classes
             {
                 SCP294.Instance.SCP294UsesLeft[scp294] = useCount;
                 // Disable and Enable
-                SCP294.Instance.SCP294LightSources[scp294].Light.Range = useCount == 0 ? 0 : 1;
-                SCP294.Instance.SCP294LightSources[scp294].Light.Intensity = useCount == 0 ? 0 : 0.25f;
+                SCP294.Instance.SCP294LightSources[scp294].Range = useCount == 0 ? 0 : 1;
+                SCP294.Instance.SCP294LightSources[scp294].Intensity = useCount == 0 ? 0 : 0.25f;
             }
         }
 

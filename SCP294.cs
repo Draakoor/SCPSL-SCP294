@@ -1,10 +1,11 @@
-﻿using Exiled.API.Features;
+using Exiled.API.Features;
 using Player = Exiled.Events.Handlers.Player;
 using Server = Exiled.Events.Handlers.Server;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using MEC;
-using MapEditorReborn.API.Features.Objects;
+using ProjectMER.Features.Objects;
 using SCP294.Classes;
 using SCP294.Types;
 using HarmonyLib;
@@ -16,8 +17,11 @@ namespace SCP294
     public class SCP294 : Plugin<Config.Config>
     {
         public override string Name => "Ultimate294";
+        public override string Prefix => "ultimate294";
         public override string Author => "creepycats";
-        public override Version Version => new Version(1, 1, 1);
+        public override Version Version => new Version(2, 0, 0);
+
+        public override Version RequiredExiledVersion => new Version(9, 14, 2);
 
         public override PluginPriority Priority => PluginPriority.Highest;
 
@@ -25,7 +29,7 @@ namespace SCP294
 
         public Dictionary<SchematicObject, bool> SpawnedSCP294s { get; set; } = new Dictionary<SchematicObject, bool>();
         public Dictionary<SchematicObject, int> SCP294UsesLeft { get; set; } = new Dictionary<SchematicObject, int>();
-        public Dictionary<SchematicObject, LightSourceObject> SCP294LightSources { get; set; } = new Dictionary<SchematicObject, LightSourceObject>();
+        public Dictionary<SchematicObject, Exiled.API.Features.Toys.Light> SCP294LightSources { get; set; } = new Dictionary<SchematicObject, Exiled.API.Features.Toys.Light>();
         public List<string> PlayersNear294 { get; set; } = new List<string>();
         public Dictionary<ushort, DrinkInfo> CustomDrinkItems = new Dictionary<ushort, DrinkInfo>();
         public DrinkManager DrinkManager = new DrinkManager();
@@ -53,6 +57,7 @@ namespace SCP294
             _harmony.PatchAll();
 
             Log.Info("Plugin Enabled!");
+            base.OnEnabled();
         }
         public override void OnDisabled()
         {
@@ -60,11 +65,16 @@ namespace SCP294
                 Log.Info("Unregistering events...");
             UnregisterEvents();
 
+            ServerHandler.Cleanup();
             DrinkManager.UnloadAllDrinks();
 
             Timing.KillCoroutines(hintCoroutine);
 
-            _harmony.UnpatchAll();
+            _harmony?.UnpatchAll(_harmony.Id);
+            SoundHandler.StopAudio();
+            foreach (var obj in SpawnedSCP294s.Keys.ToArray()) SCP294Object.RemoveSCP294(obj);
+            Instance = null;
+            base.OnDisabled();
             _harmony = null;
 
             Log.Info("Disabled Plugin Successfully");
@@ -83,18 +93,22 @@ namespace SCP294
             PlayerHandler = new handlers.playerHandler();
 
             Server.RoundStarted += ServerHandler.WaitingForPlayers;
+            Server.RestartingRound += ServerHandler.Cleanup;
 
             Player.ChangingItem += PlayerHandler.ChangingItem;
             Player.UsedItem += PlayerHandler.UsedItem;
             Player.Joined += PlayerHandler.Joined;
+            Player.VoiceChatting += PlayerHandler.VoiceChatting;
         }
         public void UnregisterEvents()
         {
             Server.RoundStarted -= ServerHandler.WaitingForPlayers;
+            Server.RestartingRound -= ServerHandler.Cleanup;
 
             Player.ChangingItem -= PlayerHandler.ChangingItem;
             Player.UsedItem -= PlayerHandler.UsedItem;
             Player.Joined -= PlayerHandler.Joined;
+            Player.VoiceChatting -= PlayerHandler.VoiceChatting;
         }
     }
 }

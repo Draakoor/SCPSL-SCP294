@@ -1,4 +1,4 @@
-﻿using Exiled.API.Enums;
+using Exiled.API.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,4 @@
-﻿using CustomPlayerEffects;
+using CustomPlayerEffects;
 using Exiled.API.Enums;
 using Exiled.Events.EventArgs.Player;
 using Hazards;
@@ -8,6 +8,7 @@ using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp173;
 using RelativePositioning;
 using SCP294.Types;
+using SCP294.Classes;
 using SCP294.Types.Config;
 using System;
 using UnityEngine;
@@ -16,6 +17,20 @@ namespace SCP294.handlers
 {
     public class playerHandler
     {
+        public void VoiceChatting(VoiceChattingEventArgs ev)
+        {
+            if (!ev.IsAllowed || !SCP294.Instance.Config.EnableVoiceEffects || ev.Player == null) return;
+            if (!SCP294.Instance.PlayerVoicePitch.TryGetValue(ev.Player.UserId, out var pitch) || Math.Abs(pitch - 1f) < 0.01f) return;
+            var msg = ev.VoiceMessage;
+            var comp = OpusComponent.Get(ev.Player.ReferenceHub);
+            var samples = new float[5760];
+            var count = comp.Decoder.Decode(msg.Data, msg.DataLength, samples);
+            if (count <= 0) return;
+            comp.PitchShift(Mathf.Clamp(pitch, 0.5f, 2f), count, 48000, samples);
+            msg.DataLength = comp.Encoder.Encode(samples, msg.Data, count);
+            ev.VoiceMessage = msg;
+        }
+
         public void Joined(JoinedEventArgs args)
         {
 
@@ -93,25 +108,7 @@ namespace SCP294.handlers
                 // Spawn Tantrum when player Drink Funny
                 if (drinkInfo.Tantrum)
                 {
-                    if (PlayerRoleLoader.TryGetRoleTemplate(RoleTypeId.Scp173, out PlayerRoleBase result))
-                    {
-                        Scp173TantrumAbility ability = ((Scp173Role)result).GetComponentInChildren<Scp173TantrumAbility>();
-
-                        if (Physics.Raycast(args.Player.Position, Vector3.down, out RaycastHit hitInfo, 3f, ability._tantrumMask))
-                        {
-                            TantrumEnvironmentalHazard tantrumEnvironmentalHazard = UnityEngine.Object.Instantiate(ability._tantrumPrefab);
-                            Vector3 targetPos = hitInfo.point + (Vector3.up * 1.25f);
-                            tantrumEnvironmentalHazard.SynchronizedPosition = new RelativePosition(targetPos);
-                            NetworkServer.Spawn(tantrumEnvironmentalHazard.gameObject);
-                            foreach (TeslaGate teslaGate in TeslaGate.AllGates)
-                            {
-                                if (teslaGate.IsInIdleRange(args.Player.Position))
-                                {
-                                    teslaGate.TantrumsToBeDestroyed.Add(tantrumEnvironmentalHazard);
-                                }
-                            }
-                        }
-                    }
+                    args.Player.PlaceTantrum();
                 }
 
                 SCP294.Instance.CustomDrinkItems.Remove(args.Item.Serial);
@@ -119,3 +116,4 @@ namespace SCP294.handlers
         }
     }
 }
+

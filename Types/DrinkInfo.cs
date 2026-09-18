@@ -1,4 +1,4 @@
-﻿using Exiled.API.Features;
+using Exiled.API.Features;
 using Exiled.API.Features.Items;
 using InventorySystem.Items;
 using SCP294.Types.Config;
@@ -64,7 +64,7 @@ namespace SCP294.Types
         /// <param name="Base"></param>
         /// <returns></returns>
         public static bool IsCustomDrink(ItemBase itembase) {
-            return SCP294.Instance.CustomDrinkItems.Keys.Contains(itembase.ItemSerial);
+            return itembase != null && SCP294.Instance != null && SCP294.Instance.CustomDrinkItems.ContainsKey(itembase.ItemSerial);
         }
     }
 }

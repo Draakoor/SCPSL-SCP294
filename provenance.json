@@ -1,0 +1,14 @@
+{
+  "version": "2.0.0",
+  "source_repository": "Draakoor/SCPSL-SCP294",
+  "gameplay_source": "https://github.com/Draakoor/technikbudde-scpsl/tree/f95ad8f/src/Ultimate294",
+  "compatibility": {
+    "scpsl": "14.2.7",
+    "exiled": "9.14.2",
+    "labapi": "1.1.7",
+    "projectmer": "2026.7.6.1"
+  },
+  "asset_sources": [
+    "https://github.com/gatodevelowoper/Ultimate294/releases/tag/v1.1.1-bugfix"
+  ]
+}

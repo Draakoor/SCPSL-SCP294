@@ -1,4 +1,4 @@
-﻿using CustomPlayerEffects;
+using CustomPlayerEffects;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.API.Features.Pickups.Projectiles;

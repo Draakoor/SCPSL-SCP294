@@ -1,4 +1,4 @@
-﻿using Exiled.API.Enums;
+using Exiled.API.Enums;
 using Exiled.API.Interfaces;
 using SCP294.Types;
 using System;
@@ -96,12 +96,12 @@ namespace SCP294.Config
         /// Enable to use the Community Made Drinks
         /// </summary>
         [Description("Enable to use the Community Made Drinks")]
-        public bool EnableCommunityDrinks { get; set; } = true;
+        public bool EnableCommunityDrinks { get; set; } = false;
         /// <summary>
         /// The maximum uses of a SCP-294 machine before it deactivates. Set to -1 for infinite uses
         /// </summary>
         [Description("The maximum uses of a SCP-294 machine before it deactivates. Set to -1 for infinite uses")]
-        public int MaxUsesPerMachine { get; set; } = 3;
+        public int MaxUsesPerMachine { get; set; } = 8;
         /// <summary>
         /// The maximum size a player can grow to from a drink.
         /// </summary>

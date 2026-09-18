@@ -1,4 +1,4 @@
-﻿using CommandSystem;
+using CommandSystem;
 using CustomPlayerEffects;
 using Exiled.API.Enums;
 using Exiled.API.Features;
@@ -6,9 +6,7 @@ using Exiled.API.Features.Items;
 using Exiled.API.Features.Pickups;
 using Exiled.API.Features.Roles;
 using Exiled.Permissions.Extensions;
-using MapEditorReborn.API.Features.Objects;
-using MapEditorReborn.Commands.ModifyingCommands.Position;
-using MapEditorReborn.Commands.ModifyingCommands.Rotation;
+using ProjectMER.Features.Objects;
 using MEC;
 using Mirror;
 using PlayerRoles;
@@ -36,6 +34,18 @@ namespace SCP294.Commands
 
         private System.Random rand = new System.Random();
 
+        private static void Schedule(SchematicObject machine, float delay, Action callback)
+        {
+            var plugin = SCP294.Instance;
+            Timing.CallDelayed(Math.Max(0, delay), () =>
+            {
+                // Round cleanup, removal and plugin reload must invalidate pending operations.
+                if (plugin == null || SCP294.Instance != plugin || machine == null ||
+                    !plugin.SpawnedSCP294s.ContainsKey(machine) || !plugin.SCP294UsesLeft.ContainsKey(machine)) return;
+                callback();
+            });
+        }
+
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             // Cannot be Server
@@ -47,6 +57,7 @@ namespace SCP294.Commands
 
             // Player MUST Be Human
             Player player = Player.Get(((PlayerCommandSender)sender).ReferenceHub);
+            if (player == null || !player.IsConnected || SCP294.Instance == null) { response = "Player or plugin unavailable."; return false; }
             if (player.Role.Team == Team.Dead)
             {
                 response = "Please wait until you spawn in as a normal class.";
@@ -88,6 +99,7 @@ namespace SCP294.Commands
                     Player targetPlayer = Player.Get(String.Join(" ", arguments.Skip(1).ToArray()));
                     if (targetPlayer != null)
                     {
+                        string targetName = targetPlayer.Nickname;
                         List<DrinkEffect> stealEffects = new List<DrinkEffect>() {
                             new DrinkEffect ()
                             {
@@ -111,8 +123,9 @@ namespace SCP294.Commands
                         // Found Drink
                         player.RemoveItem(player.CurrentItem);
                         SCP294Object.PlayDispensingSound(player, DrinkSound.Normal);
-                        Timing.CallDelayed(SCP294.Instance.Config.DispenseDelay, () =>
+                        Schedule(scp294, SCP294.Instance.Config.DispenseDelay, () =>
                         {
+                            if (!player.IsConnected || !player.IsAlive) return;
                             Item drinkItem = Item.Create(ItemType.AntiSCP207);
                             drinkItem.Scale = new Vector3(1f, 1f, 0.8f);
                             if (SCP294.Instance.Config.SpawnInOutput)
@@ -133,7 +146,7 @@ namespace SCP294.Commands
                                 ItemObject = drinkItem,
                                 DrinkEffects = new List<DrinkEffect>() { },
                                 DrinkMessage = "The drink tastes like blood. It's still warm.",
-                                DrinkName = targetPlayer.Nickname,
+                                DrinkName = targetName,
                                 KillPlayer = false,
                                 KillPlayerString = "",
                                 HealAmount = 0,
@@ -144,75 +157,18 @@ namespace SCP294.Commands
 
                         // Cooldown
                         SCP294.Instance.SpawnedSCP294s[scp294] = true;
-                        Timing.CallDelayed(SCP294.Instance.Config.CooldownTime, () =>
+                        Schedule(scp294, SCP294.Instance.Config.CooldownTime, () =>
                         {
                             SCP294.Instance.SpawnedSCP294s[scp294] = false;
                         });
 
-                        SCP294Object.SetSCP294Uses(scp294, SCP294.Instance.SCP294UsesLeft[scp294] - 1);
+                        SCP294Object.SetSCP294Uses(scp294, Math.Max(-1, SCP294.Instance.SCP294UsesLeft[scp294] - 1));
                         response = $"SCP-294 Started Dispensing a Drink of {targetPlayer.Nickname}.";
                         return true;
                     }
                     response = "SCP-294 couldn't determine your drink, and refunded you your coin.";
                     return false;
                 } 
-                else if (arguments.Count > 0 && arguments.At(0).ToLower() == "playercum")
-                {
-                    // Player Cup
-                    // Try and Get player
-                    Player targetPlayer = Player.Get(String.Join(" ", arguments.Skip(1).ToArray()));
-                    if (targetPlayer != null)
-                    {
-                        targetPlayer.ShowHint($"You feel funny, almost excited in a way...\n<size=20>({player.Nickname} ordered a Cup of You from SCP-294)</size>", 5);
-
-                        // Found Drink
-                        player.RemoveItem(player.CurrentItem);
-                        SCP294Object.PlayDispensingSound(player, DrinkSound.Normal);
-                        Timing.CallDelayed(SCP294.Instance.Config.DispenseDelay, () =>
-                        {
-                            Item drinkItem = Item.Create(ItemType.SCP207);
-                            drinkItem.Scale = new Vector3(1f, 1f, 0.8f);
-                            if (SCP294.Instance.Config.SpawnInOutput)
-                            {
-                                Vector3 spawnPos = scp294.Position;
-                                spawnPos += scp294.Rotation * new Vector3(-0.375f, 1f, -0.425f);
-
-                                Pickup drinkPickup = SCP294Object.CreateDrinkPickup(drinkItem, spawnPos, Quaternion.Euler(-90, 0, 0));
-                            }
-                            else
-                            {
-                                player.AddItem(drinkItem);
-                            }
-
-                            SCP294.Instance.CustomDrinkItems.Add(drinkItem.Serial, new DrinkInfo()
-                            {
-                                ItemSerial = drinkItem.Serial,
-                                ItemObject = drinkItem,
-                                DrinkEffects = new List<DrinkEffect>() { },
-                                DrinkMessage = "Kind of salty. Tastes good though. Feels nice and warm.",
-                                DrinkName = $"{targetPlayer.Nickname}'s Cum",
-                                KillPlayer = false,
-                                KillPlayerString = "",
-                                HealAmount = 0,
-                                HealStatusEffects = false,
-                                Tantrum = false
-                            });
-                        });
-
-                        // Cooldown
-                        SCP294.Instance.SpawnedSCP294s[scp294] = true;
-                        Timing.CallDelayed(SCP294.Instance.Config.CooldownTime, () =>
-                        {
-                            SCP294.Instance.SpawnedSCP294s[scp294] = false;
-                        });
-
-                        SCP294Object.SetSCP294Uses(scp294, SCP294.Instance.SCP294UsesLeft[scp294] - 1);
-                        response = $"SCP-294 Started Dispensing a Drink of{targetPlayer.Nickname}'s Cum.";
-                        return true;
-                    }
-                    response = "SCP-294 couldn't determine your drink, and refunded you your coin.";
-                    return false;
-                }
                 else 
                 {
                     if (SCP294.Instance.Config.ForceRandom || arguments.At(0).ToLower() == "random")
@@ -252,8 +208,9 @@ namespace SCP294.Commands
 
                                         player.RemoveItem(player.CurrentItem);
                                         SCP294Object.PlayDispensingSound(player, DrinkSound.Unstable);
-                                        Timing.CallDelayed(SCP294.Instance.Config.DispenseDelay, () =>
+                                        Schedule(scp294, SCP294.Instance.Config.DispenseDelay, () =>
                                         {
+                            if (!player.IsConnected || !player.IsAlive) return;
                                             ExplosiveGrenade grenade = (ExplosiveGrenade)Item.Create(ItemType.GrenadeHE);
                                             grenade.FuseTime = 0.1f;
                                             grenade.SpawnActive(player.Position, player);
@@ -262,13 +219,13 @@ namespace SCP294.Commands
 
                                         // Cooldown
                                         SCP294.Instance.SpawnedSCP294s[scp294] = true;
-                                        Timing.CallDelayed(SCP294.Instance.Config.CooldownTime, () =>
+                                        Schedule(scp294, SCP294.Instance.Config.CooldownTime, () =>
                                         {
                                             SCP294.Instance.SpawnedSCP294s[scp294] = false;
                                         });
 
                                         response = $"SCP-294 Started Dispensing a Drink of {drinkName}. {(SCP294.Instance.Config.ForceRandom ? "(Server Forced Random Drink)" : "")}";
-                                        SCP294Object.SetSCP294Uses(scp294, SCP294.Instance.SCP294UsesLeft[scp294] - 1);
+                                        SCP294Object.SetSCP294Uses(scp294, Math.Max(-1, SCP294.Instance.SCP294UsesLeft[scp294] - 1));
                                         return true;
                                     } else
                                     {
@@ -295,8 +252,9 @@ namespace SCP294.Commands
                                         // Found Drink
                                         player.RemoveItem(player.CurrentItem);
                                         SCP294Object.PlayDispensingSound(player, DrinkSound.Normal);
-                                        Timing.CallDelayed(SCP294.Instance.Config.DispenseDelay, () =>
+                                        Schedule(scp294, SCP294.Instance.Config.DispenseDelay, () =>
                                         {
+                            if (!player.IsConnected || !player.IsAlive) return;
                                             Item drinkItem = Item.Create(ItemType.AntiSCP207);
                                             drinkItem.Scale = new Vector3(1f, 1f, 0.8f);
                                             if (SCP294.Instance.Config.SpawnInOutput)
@@ -328,13 +286,13 @@ namespace SCP294.Commands
 
                                         // Cooldown
                                         SCP294.Instance.SpawnedSCP294s[scp294] = true;
-                                        Timing.CallDelayed(SCP294.Instance.Config.CooldownTime, () =>
+                                        Schedule(scp294, SCP294.Instance.Config.CooldownTime, () =>
                                         {
                                             SCP294.Instance.SpawnedSCP294s[scp294] = false;
                                         });
 
                                         response = $"SCP-294 Backfired!!! It Started Dispensing a Drink of {player.Nickname}";
-                                        SCP294Object.SetSCP294Uses(scp294, SCP294.Instance.SCP294UsesLeft[scp294] - 1);
+                                        SCP294Object.SetSCP294Uses(scp294, Math.Max(-1, SCP294.Instance.SCP294UsesLeft[scp294] - 1));
                                         return true;
                                     }
                                 } else
@@ -364,8 +322,9 @@ namespace SCP294.Commands
                                         }
                                     }
                                     SCP294Object.PlayDispensingSound(player, customDrink.Explode ? DrinkSound.Unstable : DrinkSound.Normal);
-                                    Timing.CallDelayed(SCP294.Instance.Config.DispenseDelay, () =>
+                                    Schedule(scp294, SCP294.Instance.Config.DispenseDelay, () =>
                                     {
+                            if (!player.IsConnected || !player.IsAlive) return;
                                         if (customDrink.Explode)
                                         {
                                             ExplosiveGrenade grenade = (ExplosiveGrenade)Item.Create(ItemType.GrenadeHE);
@@ -407,13 +366,13 @@ namespace SCP294.Commands
 
                                     // Cooldown
                                     SCP294.Instance.SpawnedSCP294s[scp294] = true;
-                                    Timing.CallDelayed(SCP294.Instance.Config.CooldownTime, () =>
+                                    Schedule(scp294, SCP294.Instance.Config.CooldownTime, () =>
                                     {
                                         SCP294.Instance.SpawnedSCP294s[scp294] = false;
                                     });
 
                                     response = $"SCP-294 Started Dispensing a Drink of {drinkName}. {(SCP294.Instance.Config.ForceRandom ? "(Server Forced Random Drink)" : "")}";
-                                    SCP294Object.SetSCP294Uses(scp294, SCP294.Instance.SCP294UsesLeft[scp294] - 1);
+                                    SCP294Object.SetSCP294Uses(scp294, Math.Max(-1, SCP294.Instance.SCP294UsesLeft[scp294] - 1));
                                     return true;
                                 }
                             }

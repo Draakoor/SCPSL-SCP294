@@ -1,7 +1,7 @@
-﻿using CommandSystem;
+using CommandSystem;
 using CustomPlayerEffects;
 using Exiled.API.Features;
-using Exiled.CreditTags.Features;
+
 using Exiled.Permissions.Extensions;
 using MEC;
 using RemoteAdmin;
@@ -211,3 +211,5 @@ namespace SCP294.Commands
         }
     }
 }
+
+

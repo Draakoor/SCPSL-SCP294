@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
 *
 * NAME: PitchShift.cs
 * VERSION: 1.2
@@ -44,7 +44,7 @@
 * 
 *****************************************************************************/
 
-using SCPSLAudioApi.AudioCore;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,6 +84,11 @@ namespace SCP294.Classes
             return player;
         }
 
+        private void OnDestroy()
+        {
+            Encoder.Dispose(); Decoder.Dispose();
+            if (SCP294.Instance != null && Owner != null) SCP294.Instance.Encoders.Remove(Owner);
+        }
         #region Private Static Memebers
         private static int MAX_FRAME_LENGTH = 16000;
         private float[] gInFIFO = new float[MAX_FRAME_LENGTH];
@@ -96,7 +101,7 @@ namespace SCP294.Classes
         private float[] gAnaMagn = new float[MAX_FRAME_LENGTH];
         private float[] gSynFreq = new float[MAX_FRAME_LENGTH];
         private float[] gSynMagn = new float[MAX_FRAME_LENGTH];
-        private long gRover, gInit;
+        private long gRover;
         #endregion
 
         #region Public Static  Methods
@@ -319,3 +324,5 @@ namespace SCP294.Classes
         #endregion
     }
 }
+
+

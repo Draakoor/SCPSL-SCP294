@@ -1,0 +1,97 @@
+# Will the plugin run?
+is_enabled: true
+# Will the plugin print Debug Text?
+debug: false
+# Configure the Spawning Locations of SCP-294
+spawning_locations:
+  spawn_amount: 1
+  spawn_rooms:
+    EzUpstairsPcs:
+    - position:
+        x: -5.15
+        y: 0
+        z: 2
+      rotation:
+        x: 0
+        y: -90
+        z: 0
+      scale:
+        x: 1
+        y: 1
+        z: 1
+    EzPcs:
+    - position:
+        x: -7
+        y: 0
+        z: -1.75
+      rotation:
+        x: 0
+        y: -90
+        z: 0
+      scale:
+        x: 1
+        y: 1
+        z: 1
+    - position:
+        x: 2.5
+        y: 0
+        z: 6.8
+      rotation:
+        x: 0
+        y: 0
+        z: 0
+      scale:
+        x: 1
+        y: 1
+        z: 1
+    EzDownstairsPcs:
+    - position:
+        x: 7
+        y: -1.5
+        z: -5.8
+      rotation:
+        x: 0
+        y: 90
+        z: 0
+      scale:
+        x: 1
+        y: 1
+        z: 1
+    - position:
+        x: 7
+        y: -1.5
+        z: 5.8
+      rotation:
+        x: 0
+        y: 90
+        z: 0
+      scale:
+        x: 1
+        y: 1
+        z: 1
+# Enable Voice Effects? Disable this if performance is subpar and you give out more than about 8 drinks per round.
+enable_voice_effects: true
+# Should players be forced to get a random drink? (Player drinks will still be requestable)
+force_random: false
+# How close to the machine does the player have to be?
+use_distance: 2.5
+# Should the Cola be dispensed into the machine's output? Set to False to put it in the player's inventory.
+spawn_in_output: true
+# How long should it take from command execution to dispense the drink?
+dispense_delay: 5.5
+# Cooldown after a player uses the machine. Starts exactly as the coin is inserted
+cooldown_time: 10
+# Enable to use the Community Made Drinks
+enable_community_drinks: false
+# The maximum uses of a SCP-294 machine before it deactivates. Set to -1 for infinite uses
+max_uses_per_machine: 8
+# The maximum size a player can grow to from a drink.
+max_size_from_drink:
+  x: 1.3
+  y: 1.3
+  z: 1.3
+# The minimum size a player can shrink to from a drink.
+min_size_from_drink:
+  x: 0.7
+  y: 0.7
+  z: 0.7
