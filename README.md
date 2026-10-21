@@ -1,8 +1,8 @@
-# SCP-294 — 2.1.0
+# SCP-294 — 2.2.0
 
 A coin-operated anomalous drinks machine with configurable Entrance Zone spawn points, drink effects, dispensing sounds and admin commands. The included server preset allows eight uses per machine and disables community joke drinks.
 
-Updated for **SCP:SL 14.2.7 / EXILED 9.14.2 / LabAPI 1.1.7 / ProjectMER 2026.7.6.1**. [Download the release](https://github.com/Draakoor/SCPSL-SCP294/releases/tag/v2.1.0).
+Updated for **SCP:SL 14.2.8 / EXILED 9.15.2 / LabAPI 1.1.7 / ProjectMER 2026.7.6.1**. [Download the release](https://github.com/Draakoor/SCPSL-SCP294/releases/tag/v2.2.0).
 
 ## Installation
 

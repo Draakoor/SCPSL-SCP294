@@ -9,7 +9,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <Deterministic>true</Deterministic>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
     <SLReferences Condition="'$(SLReferences)' == ''">$(MSBuildThisFileDirectory)references</SLReferences>
   </PropertyGroup>
   <ItemGroup>

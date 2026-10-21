@@ -19,9 +19,9 @@ namespace SCP294
         public override string Name => "Ultimate294";
         public override string Prefix => "ultimate294";
         public override string Author => "creepycats";
-        public override Version Version => new Version(2, 1, 0);
+        public override Version Version => new Version(2, 2, 0);
 
-        public override Version RequiredExiledVersion => new Version(9, 14, 2);
+        public override Version RequiredExiledVersion => new Version(9, 15, 2);
 
         public override PluginPriority Priority => PluginPriority.Highest;
 
